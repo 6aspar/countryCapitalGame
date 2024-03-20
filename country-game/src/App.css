@@ -1,0 +1,18 @@
+button {
+  background-color: fbfbfb;
+  border-radius: 5px;
+  margin: 10px;
+  width: 150px;
+  padding: 10px 20px;
+  font-size: 15px
+}
+
+button:focus {
+  background-color: #0000FF
+}
+
+.matched {
+  background-color: green;
+  cursor: not-allowed;
+  color: white;
+}
