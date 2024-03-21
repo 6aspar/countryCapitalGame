@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 const matchedPairs: any = [];
-const matchedButtonsIds: any = [];
-let errorIds: any = [];
+const matchedButtons: any = [];
+let errorButtons: any = [];
 
 export const MatchGame = (data: any) => {
   const [errors, setErrors] = useState(0);
@@ -26,11 +26,11 @@ export const MatchGame = (data: any) => {
   const clearCurrent = () => {
     setSelectedCountry(null);
     setSelectedCapital(null);
-    errorIds = [];
+    errorButtons = [];
   };
 
   const hasMatched = (id: any) => {
-    if (matchedButtonsIds.includes(id)) {
+    if (matchedButtons.includes(id)) {
       return true;
     }
 
@@ -38,11 +38,11 @@ export const MatchGame = (data: any) => {
   };
 
   const whichPairedStyles = (id: any) => {
-    if (matchedButtonsIds.includes(id)) {
+    if (matchedButtons.includes(id)) {
       return "matched";
     }
 
-    if (errorIds.includes(id)) {
+    if (errorButtons.includes(id)) {
       return "error";
     }
 
@@ -54,8 +54,7 @@ export const MatchGame = (data: any) => {
       clearCurrent();
       if (selectedCountry[0] === selectedCapital[0]) {
         matchedPairs.push(selectedCountry);
-        matchedButtonsIds.push("button" + selectedCountry[0]);
-        matchedButtonsIds.push("button" + selectedCountry[1]);
+        matchedButtons.push(selectedCountry[0], selectedCountry[1]);
         if (matchedPairs.length === countryPairs.length) {
           alert("VICTORY!");
         }
@@ -64,8 +63,7 @@ export const MatchGame = (data: any) => {
           alert("GAME OVER!");
         }
         setErrors((prevErr) => prevErr + 1);
-        errorIds.push("button" + selectedCountry[0]);
-        errorIds.push("button" + selectedCapital[1]);
+        errorButtons.push(selectedCountry[0], selectedCapital[1]);
       }
     }
   }, [selectedCapital, selectedCountry]);
@@ -76,9 +74,8 @@ export const MatchGame = (data: any) => {
         {countryPairs?.map((item: any) => {
           return (
             <button
-              id={"button" + item[0]}
-              disabled={hasMatched("button" + item[0])}
-              className={whichPairedStyles("button" + item[0])}
+              disabled={hasMatched(item[0])}
+              className={whichPairedStyles(item[0])}
               onClick={() => setSelectedCountry(item)}
             >
               {item[0]}
@@ -90,9 +87,8 @@ export const MatchGame = (data: any) => {
         {capitalPairs?.map((item: any) => {
           return (
             <button
-              id={"button" + item[1]}
-              disabled={hasMatched("button" + item[1])}
-              className={whichPairedStyles("button" + item[1])}
+              disabled={hasMatched(item[1])}
+              className={whichPairedStyles(item[1])}
               onClick={() => setSelectedCapital(item)}
             >
               {item[1]}
