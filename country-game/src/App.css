@@ -16,3 +16,8 @@ button:focus {
   cursor: not-allowed;
   color: white;
 }
+
+.error {
+  background-color: red;
+  color: white;
+}
