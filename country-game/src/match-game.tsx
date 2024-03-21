@@ -2,62 +2,83 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 const matchedPairs: any = [];
+const matchedButtonsIds: any = [];
+let errorIds: any = [];
 
 export const MatchGame = (data: any) => {
   const [errors, setErrors] = useState(0);
   const [selectedCapital, setSelectedCapital] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [capitalPairs, setCapitalPairs] = useState(Object.entries(data.data));
+  const [shuffled, setShuffled] = useState(false)
 
-  const pairs = Object.entries(data.data);
-  const pairsArr: any = [];
+  const countryPairs = Object.entries(data.data);
 
   useEffect(() => {
-    pairs.map((item) => {
-      pairsArr.push(item);
-    });
+    if (!shuffled) {
+      setCapitalPairs(
+        Object.entries(data.data).sort(() => (Math.random() > 0.5 ? 1 : -1))
+      );
+      setShuffled(true)
+    }
   }, []);
 
   const clearCurrent = () => {
     setSelectedCountry(null);
     setSelectedCapital(null);
+    errorIds = [];
+  };
+
+  const hasMatched = (id: any) => {
+    if (matchedButtonsIds.includes(id)) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const whichPairedStyles = (id: any) => {
+    if (matchedButtonsIds.includes(id)) {
+      return "matched";
+    }
+
+    if (errorIds.includes(id)) {
+      return "error";
+    }
+
+    return "";
   };
 
   useEffect(() => {
     if (selectedCountry && selectedCapital) {
+      clearCurrent();
       if (selectedCountry[0] === selectedCapital[0]) {
         matchedPairs.push(selectedCountry);
-        if (matchedPairs.length === pairs.length) {
+        matchedButtonsIds.push("button" + selectedCountry[0]);
+        matchedButtonsIds.push("button" + selectedCountry[1]);
+        if (matchedPairs.length === countryPairs.length) {
           alert("VICTORY!");
         }
-        clearCurrent();
       } else {
         if (errors == 2) {
           alert("GAME OVER!");
         }
         setErrors((prevErr) => prevErr + 1);
-        clearCurrent();
+        errorIds.push("button" + selectedCountry[0]);
+        errorIds.push("button" + selectedCapital[1]);
       }
     }
   }, [selectedCapital, selectedCountry]);
 
-  const matched = (item: any) => {
-    matchedPairs.map((pair: any) => {
-      if (pair[0] === item[0]) {
-        return true;
-      }
-    });
-    return false;
-  };
-
   return (
     <>
       <div>
-        {pairs?.map((item: any) => {
+        {countryPairs?.map((item: any) => {
           return (
             <button
               id={"button" + item[0]}
-              disabled={matched(item)}
-              className={matched(item) ? "matched" : ""}
+              disabled={hasMatched("button" + item[0])}
+              className={whichPairedStyles("button" + item[0])}
               onClick={() => setSelectedCountry(item)}
             >
               {item[0]}
@@ -65,11 +86,17 @@ export const MatchGame = (data: any) => {
           );
         })}
       </div>
-
       <div>
-        {pairs?.map((item: any) => {
+        {capitalPairs?.map((item: any) => {
           return (
-            <button onClick={() => setSelectedCapital(item)}>{item[1]}</button>
+            <button
+              id={"button" + item[1]}
+              disabled={hasMatched("button" + item[1])}
+              className={whichPairedStyles("button" + item[1])}
+              onClick={() => setSelectedCapital(item)}
+            >
+              {item[1]}
+            </button>
           );
         })}
       </div>
